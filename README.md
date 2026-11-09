@@ -1,36 +1,50 @@
 # HydrogenMSG
 
 Companion **code** for the IJSS manuscript on hydrogen transport and trapping
-in mechanism-based strain gradient (MSG) plasticity. The manuscript itself is
-published separately by the journal; this repository does not contain the paper.
+in mechanism-based strain gradient (MSG) plasticity. The manuscript is published
+separately; this repository contains only the theory, FEM solvers, and figure
+generators.
 
-## What is included
+## Layout
 
-| Path | Role |
-|------|------|
-| `scripts/msg_hydrogen.py` | Analytical MSG–Oriani model (torsion, bending, void, cavitation) |
-| `scripts/fem_canonical.py` | Q9 checks for torsion / bending FEM panels |
-| `scripts/fem_msg.py` | Axisymmetric void FEM |
-| `scripts/fem_slit.py` | Plane-strain Mode-I slit FEM (HELP) |
-| `scripts/figures/` | One script per manuscript subfigure |
-| `figures/` | Generated PDF/PNG panels (gitignored; create by running the scripts) |
+```
+hydrogenmsg/
+  analytics.py      # closed-form MSG–Oriani model
+  fem/              # CMSG finite-element solvers
+    canonical.py    # torsion / bending Q9 checks
+    void.py         # spherical void
+    slit.py         # Mode-I slit + HELP
+  plot/             # manuscript figure library
+    panels.py       # panel registry
+    analytical.py / schematics.py / fem_panels.py / …
+output/             # generated PDF/PNG (gitignored)
+make_figures.py     # thin CLI wrapper
+```
+
+## Install
+
+```bash
+python3 -m pip install -e .
+```
+
+Or just install the dependencies:
+
+```bash
+python3 -m pip install -r requirements.txt
+```
 
 ## Reproduce the figures
 
 ```bash
-python3 -m pip install -r requirements.txt
-python3 scripts/make_figures.py
-```
-
-Single panel:
-
-```bash
-python3 scripts/figures/fig3a.py
+python3 make_figures.py                 # all panels → output/
+python3 -m hydrogenmsg.plot fig3a       # one panel
+python3 -m hydrogenmsg.plot --list
 ```
 
 ## FEM verification
 
 ```bash
-python3 scripts/fem_msg.py
-python3 scripts/fem_canonical.py
+python3 -m hydrogenmsg.fem.void
+python3 -m hydrogenmsg.fem.canonical
+python3 -m hydrogenmsg.fem.slit
 ```

@@ -1,0 +1,81 @@
+% MSG–hydrogen coupling chain (Fig. 1a).
+% Style matched to the project's TikZ schematic convention.
+% Compile standalone via fig1a.tex in this directory.
+\begin{tikzpicture}[
+  >=Latex,
+  node distance=5.5mm and 10mm,
+  line width=.9pt,
+  every node/.style={font=\rmfamily},
+  box/.style={draw, rounded corners=2mm, inner sep=4pt, outer sep=0pt,
+              fill=white, align=center},
+  key/.style={box, fill=gray!10},
+  arr/.style={-Latex},
+  feed/.style={-Latex, densely dashed, gray},
+  lab/.style={font=\rmfamily}
+]
+
+% --- Top spine ---
+\node[box, minimum width=54mm] (kin)
+{\textbf{Kinematics and geometry}\\[2pt]
+$u_i,\ \varepsilon_{ij}$};
+
+\node[box, below=of kin, minimum width=54mm] (eff)
+{\textbf{Effective measures}\\[2pt]
+$\varepsilon_{\mathrm{e}},\ \eta$};
+
+\node[key, below=of eff, minimum width=54mm] (tay)
+{\textbf{MSG / Taylor identity}\\[2pt]
+$\rho_{\mathrm{T}}=\rho_{\mathrm{S}}+\rho_{\mathrm{G}}$};
+
+\draw[arr] (kin) -- (eff);
+\draw[arr] (eff) -- (tay);
+
+% --- Split ---
+\node[box, below left=8mm and 3mm of tay, minimum width=50mm] (flow)
+{\textbf{Flow stress}\\[2pt]
+$\sigma_{\mathrm{e}}=\sigma_{\mathrm{Y}}\sqrt{f^{2}+l\,\eta}$};
+
+\node[box, below right=8mm and 3mm of tay, minimum width=50mm] (nt)
+{\textbf{Trap-site density}\\[2pt]
+$N_{\mathrm{T}}=\chi\rho_{\mathrm{T}}/b$};
+
+\draw[arr] (tay.south) -- ++(0,-3mm) -| (flow.north);
+\draw[arr] (tay.south) -- ++(0,-3mm) -| (nt.north);
+
+% --- Left mechanical / lattice column ---
+\node[box, below=of flow, minimum width=50mm] (eq)
+{\textbf{Higher-order equilibrium and BCs}\\[2pt]
+$\sigma'_{ik,i}-\tau'_{ijk,ij}+H_{,k}=0$};
+
+\node[box, below=of eq, minimum width=50mm] (sm)
+{\textbf{Mean stress}\\[2pt]
+$\sigma_{\mathrm{m}}$};
+
+\node[box, below=of sm, minimum width=50mm] (thL)
+{\textbf{Lattice occupancy}\\[2pt]
+$\theta_{\mathrm{L}}\propto e^{\sigma_{\mathrm{m}}\bar{V}_{\mathrm{H}}/RT}$};
+
+\node[box, below=of thL, minimum width=50mm] (thT)
+{\textbf{Oriani / Trap occupancy}\\[2pt]
+$\theta_{\mathrm{T}}(\theta_{\mathrm{L}},K_{\mathrm{T}})$};
+
+\draw[arr] (flow) -- (eq);
+\draw[arr] (eq) -- (sm);
+\draw[arr] (sm) -- (thL);
+\draw[arr] (thL) -- (thT);
+
+% --- Right: N_T to trapped H (aligned with Oriani row) ---
+\node[key, minimum width=50mm] (cT) at (nt |- thT)
+{\textbf{Trapped H}\\[2pt]
+$c_{\mathrm{T}}=N_{\mathrm{T}}\,\theta_{\mathrm{T}}$};
+
+\draw[arr] (nt.south) -- (cT.north);
+% No floating $\theta_{\mathrm{T}}$ edge label; both end boxes already show it.
+\draw[arr] (thT.east) -- (cT.west);
+
+% --- HELP feedback (amplitude only): dashed loop only; caption names it ---
+\draw[feed]
+  (thT.west) -- ++(-11mm,0)
+  |- ([xshift=-11mm]flow.west) -- (flow.west);
+
+\end{tikzpicture}

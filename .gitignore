@@ -8,9 +8,12 @@ venv/
 .DS_Store
 .pytest_cache/
 .ipynb_checkpoints/
+*.egg-info/
+dist/
+build/
 
-# Generated figure panels (run scripts/make_figures.py)
-figures/*.pdf
-figures/*.png
-figures/*.json
-!figures/.gitkeep
+# Generated panels
+output/*.pdf
+output/*.png
+output/*.json
+!output/.gitkeep
