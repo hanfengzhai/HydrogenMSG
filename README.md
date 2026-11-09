@@ -11,18 +11,18 @@ problems for non-hydrostatic voids and a Mode-I slit with HELP softening.
 This repository is the theory library and the figure factory behind those plots.
 
 <p align="center">
-  <img src="docs/fig1_channels_bunny_lit.png" width="94%" alt="Illustrative sigma_m and rho_T on the Stanford bunny" />
+  <img src="docs/fig1_channels_bunny_coupled.png" width="94%" alt="Illustrative sigma_m and rho_T on the Stanford bunny" />
 </p>
 
 <p align="center">
 <em>
-Same two physical channels as Fig.&nbsp;1 of the paper, shown as illustrative
-proxies on the Stanford bunny:<br/>
-(a)&nbsp;mean stress&nbsp;$\sigma_{\mathrm{m}}$
+Illustrative proxies of the two Fig.&nbsp;1 channels on one bending field
+mapped to the Stanford bunny:<br/>
+(a)&nbsp;signed mean stress&nbsp;$\sigma_{\mathrm{m}}$
 (sets lattice / trap occupancy through Oriani);<br/>
-(b)&nbsp;dislocation density&nbsp;$\rho_{\mathrm{T}}$
-(sets trap-site density through
-$N_{\mathrm{T}}=\chi\rho_{\mathrm{T}}/b$).
+(b)&nbsp;dislocation density&nbsp;$\rho_{\mathrm{T}}\propto f^{2}(\varepsilon_e)+l\eta$
+from the same bend (outer fibers), which sets
+$N_{\mathrm{T}}=\chi\rho_{\mathrm{T}}/b$.
 </em>
 </p>
 
@@ -69,18 +69,6 @@ $$
 $$
 
 The FEM panels reuse the same constitutive ideas on meshes.
-
-## Repository layout
-
-```text
-hydrogenmsg/
-  analytics.py     # closed-form MSG–Oriani model
-  fem/             # void, slit, and canonical FEM solvers
-  plot/            # manuscript figure generators + CLI
-docs/              # README figures
-output/            # generated PDF/PNG panels (from the CLI)
-make_figures.py
-```
 
 ## Quick start
 
