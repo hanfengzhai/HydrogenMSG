@@ -11,12 +11,17 @@ problems for non-hydrostatic voids and a Mode-I slit with HELP softening.
 This repository is the theory library and the figure factory behind those plots.
 
 <p align="center">
-  <img src="docs/bunny_sigma_m_rho_T.png" width="92%" alt="Illustrative sigma_m and rho_T on the Stanford bunny" />
+  <img src="docs/fig1_channels_bunny.png" width="92%" alt="Illustrative sigma_m and rho_T on the Stanford bunny" />
 </p>
 
 <p align="center">
-<em>Illustrative visualization proxies on the Stanford bunny:
-$\sigma_{\mathrm{m}}/\sigma_{\mathrm{Y}}$ (left) and $\rho_{T}$ (right).</em>
+<em>
+Same two physical channels as Fig.&nbsp;1 of the paper, shown as illustrative
+proxies on the Stanford bunny:
+(a) mean stress $\sigma_{\mathrm{m}}$ (sets lattice / trap occupancy through Oriani);
+(b) dislocation density $\rho_{\mathrm{T}}$ (sets trap-site density via
+$N_{\mathrm{T}}=\chi\rho_{\mathrm{T}}/b$).
+</em>
 </p>
 ## Overview
 
