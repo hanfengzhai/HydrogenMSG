@@ -33,7 +33,6 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
 
-# Repository root: hydrogenmsg/plot/style.py → parents[2]
 _ROOT = Path(__file__).resolve().parents[2]
 OUT = str(_ROOT / "output")
 os.makedirs(OUT, exist_ok=True)
@@ -257,7 +256,7 @@ def match_panel_canvases(paths):
 
 def save(fig, name, *, dpi_png=200, tight=True, pad_inches=0.03,
          fixed_canvas=False, crop=None):
-    """Write PDF + PNG under ``figures/``.
+    """Write PDF + PNG under ``output/``.
 
     By default crops with ``bbox_inches='tight'`` and a content-based trim.
     Pass ``fixed_canvas=True`` to keep the authored figure size (identical

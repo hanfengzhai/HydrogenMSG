@@ -277,7 +277,7 @@ def sketch_void(ax, cx, cy, r):
 def draw_coupling_chain(ax, W, H):
     """Overview panel (a): MSG-hydrogen causal chain.
 
-    TikZ-matched style (see ``fig1a.tikz``): white rounded
+    TikZ-matched style (see ``paper/figures/fig1a.tikz``): white rounded
     boxes, ``gray!10`` key nodes, black ``Latex`` arrows, serif mathtext.
 
     Sequence: kinematics -> (eps_e, eta) -> MSG/Taylor -> (rho_T, sigma_e)/N_T.
@@ -831,6 +831,82 @@ def make_fig8c():
     ax = plot_panel(fig, [0.14, 0.18, 0.72, 0.68])
     draw_void_cavitation(ax)
     save(fig, "fig8c.pdf")
+
+
+def draw_cavitation_geometry(ax, W, H):
+    """Finite-strain cavitation geometry: $R_0\\to r_0$, far-field $\\sigma^\\infty$.
+
+    Matches the manuscript caption: initial void radius $R_0$, current wall
+    $r_0$, material map $R\\to r$, dashed outer arcs for the unbounded far field.
+    """
+    cx, cy = 0.50 * W, 0.52 * H
+    R0 = 0.38
+    r0 = 0.62
+    Rout = 1.35
+
+    # Far-field disk (unbounded domain cue).
+    ax.add_patch(Circle((cx, cy), Rout, facecolor="0.965", edgecolor="none"))
+    th = np.linspace(0, 2 * np.pi, 120)
+    for frac in (0.92, 1.0):
+        ax.plot(
+            cx + frac * Rout * np.cos(th),
+            cy + frac * Rout * np.sin(th),
+            color=EDGE, lw=0.8, ls=(0, (2.5, 2.0)), solid_capstyle="round",
+        )
+
+    # Current void wall (solid) and initial wall (dashed).
+    ax.add_patch(Circle((cx, cy), r0, facecolor="white", edgecolor=EDGE, lw=1.15))
+    ax.plot(
+        cx + R0 * np.cos(th), cy + R0 * np.sin(th),
+        color="0.45", lw=0.9, ls=(0, (3, 2)),
+    )
+
+    # Remote hydrostatic tension.
+    for ang in (20, 70, 110, 160, 200, 250, 290, 340):
+        a = np.deg2rad(ang)
+        arrow(
+            ax,
+            (cx + 1.02 * Rout * np.cos(a), cy + 1.02 * Rout * np.sin(a)),
+            (cx + 1.16 * Rout * np.cos(a), cy + 1.16 * Rout * np.sin(a)),
+            color=MECH, lw=0.9, scale=7,
+        )
+    ax.text(
+        cx - 1.22 * Rout, cy + 1.05 * Rout, r"$\sigma^{\infty}$",
+        ha="center", va="center", fontsize=LABEL_FS, color=MECH,
+    )
+
+    # Radii at the equator.
+    arrow(ax, (cx, cy), (cx + R0, cy), color=EDGE, lw=0.7, scale=5)
+    ax.text(cx + 0.52 * R0, cy - 0.12, r"$R_0$", fontsize=TINY_FS,
+            ha="center", va="top")
+    arrow(ax, (cx, cy), (cx + r0, cy), color=EDGE, lw=0.7, scale=5)
+    ax.text(cx + 0.72 * r0, cy + 0.10, r"$r_0$", fontsize=TINY_FS,
+            ha="center", va="bottom")
+
+    # Material map R → r in the solid.
+    ang = np.deg2rad(-35)
+    p0 = (cx + 0.78 * r0 * np.cos(ang), cy + 0.78 * r0 * np.sin(ang))
+    p1 = (cx + 1.05 * Rout * np.cos(ang), cy + 1.05 * Rout * np.sin(ang))
+    arrow(ax, p0, p1, color=EDGE, lw=0.8, scale=6)
+    ax.text(
+        cx + 1.18 * Rout * np.cos(ang), cy + 1.18 * Rout * np.sin(ang),
+        r"$R\rightarrow r$", fontsize=TINY_FS, ha="left", va="center",
+    )
+
+    ax.set_xlim(0, W)
+    ax.set_ylim(0, H)
+
+
+def make_fig_cavitation_geom():
+    """Manuscript Fig. cavitation geometry (finite-strain void expansion)."""
+    _apply_schematic_style()
+    figsize = (4.6, 4.8)
+    fig = plt.figure(figsize=figsize)
+    rect = [0.06, 0.06, 0.88, 0.88]
+    ax = geom_panel(fig, rect, figsize)
+    draw_cavitation_geometry(ax, rect[2] * figsize[0], rect[3] * figsize[1])
+    fit_geom_panel(fig, ax, pad=0.08, min_size=3.5)
+    save(fig, "fig_cavitation_geom.pdf")
 
 
 # ----------------------------------------------------------------------

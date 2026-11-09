@@ -18,10 +18,11 @@ Usage:  python3 -m hydrogenmsg.fem.canonical
 
 from __future__ import annotations
 
+
 import numpy as np
 
 from hydrogenmsg.analytics import (Params, bending_fields, f_power, theta_L_local,
-                                   theta_T, torsion_cT_profile, torsion_torque)
+                          theta_T, torsion_cT_profile, torsion_torque)
 
 
 # ----------------------------------------------------------------------

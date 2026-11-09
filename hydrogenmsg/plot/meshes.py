@@ -137,7 +137,7 @@ def fig_one(name, coords, conn, title, xlabel, ylabel, highlight=None,
     save(fig, name)
 
 
-if __name__ == "__main__":
+def main():
     p = Params()
     R0 = p.l / L_OVER_R0
     void = make_void_mesh(R0, VOID_MESH_KW["Rout_over_R0"] * R0,
@@ -160,3 +160,7 @@ if __name__ == "__main__":
             f"Bending mesh: {strip['n_x']} x {strip['n_y']} Q9",
             r"$x_1/h$", r"$x_2/h$", lw=0.25)
     print("done")
+
+
+if __name__ == "__main__":
+    main()

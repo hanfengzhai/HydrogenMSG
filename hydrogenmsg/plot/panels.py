@@ -69,6 +69,7 @@ PANELS: dict[str, Callable[[], None]] = {
     "fig8a": S.make_fig8a,
     "fig8b": S.make_fig8b,
     "fig8c": S.make_fig8c,
+    "fig_cavitation_geom": S.make_fig_cavitation_geom,
     # Analytical (fixed canvas where the manuscript needs matched boxes)
     "fig3a": _analytical("fig3a", A.draw_fig3a, (4.48, 4.0)),
     "fig3b": _fixed("fig3b", A.draw_fig3b, (4.48, 4.0), [0.18, 0.16, 0.74, 0.78]),
@@ -107,13 +108,14 @@ PANELS: dict[str, Callable[[], None]] = {
     "fig12f": F.fig12f,
 }
 
-# Manuscript build order (schematics → analytical → FEM).
+# Full companion build order (schematics → analytical → FEM).
 DEFAULT_ORDER: tuple[str, ...] = (
     "fig_mechanism",
     "fig1a", "fig1b",
     "fig2a", "fig2b", "fig2c",
     "fig5a", "fig5b", "fig5c",
     "fig8a", "fig8b", "fig8c",
+    "fig_cavitation_geom",
     "fig3a", "fig3b", "fig3c",
     "fig6a", "fig6b", "fig6c", "fig6d", "fig6_fields",
     "fig9a", "fig9b", "fig9c", "fig9d",
@@ -122,6 +124,23 @@ DEFAULT_ORDER: tuple[str, ...] = (
     "fig7a", "fig7b", "fig7c",
     "fig11a", "fig11b", "fig11c", "fig11d", "fig11e", "fig11f",
     "fig12mesh", "fig12conv",
+    "fig12a", "fig12b", "fig12c", "fig12d", "fig12e", "fig12f",
+)
+
+# Panels actually ``\\includegraphics``'d in the current manuscript TeX.
+MANUSCRIPT_ORDER: tuple[str, ...] = (
+    "fig_mechanism",
+    "fig1a",
+    "fig2a",
+    "fig3b", "fig3c",
+    "fig5a",
+    "fig6a", "fig6c", "fig6d",
+    "fig8a",
+    "fig9a", "fig9b", "fig9d",
+    "fig_cavitation_geom",
+    "fig10a", "fig10b",
+    "fig11a", "fig11c", "fig11d", "fig11f",
+    "fig12mesh",
     "fig12a", "fig12b", "fig12c", "fig12d", "fig12e", "fig12f",
 )
 
