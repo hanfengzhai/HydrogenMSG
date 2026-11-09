@@ -11,15 +11,13 @@ problems for non-hydrostatic voids and a Mode-I slit with HELP softening.
 This repository is the theory library and the figure factory behind those plots.
 
 <p align="center">
-  <img src="docs/bunny_banner.png" width="92%" alt="Illustrative mean stress and dislocation / trap density on the Stanford bunny" />
+  <img src="docs/bunny_banner.png" width="92%" alt="Illustrative mean stress and dislocation density on the Stanford bunny" />
 </p>
 
 <p align="center">
 <em>Illustrative visualization proxies on the Stanford bunny:
-mean stress $\sigma_{\mathrm{m}}/\sigma_{\mathrm{Y}}$ (left) and
-trap-site density $N_{\mathrm{T}}$ as a dislocation-density proxy (right).</em>
+$\sigma_{\mathrm{m}}/\sigma_{\mathrm{Y}}$ (left) and $\rho_{T}$ (right).</em>
 </p>
-
 ## Overview
 
 MSG plasticity ties the flow stress to statistically stored and geometrically
