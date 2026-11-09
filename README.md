@@ -11,18 +11,21 @@ problems for non-hydrostatic voids and a Mode-I slit with HELP softening.
 This repository is the theory library and the figure factory behind those plots.
 
 <p align="center">
-  <img src="docs/fig1_channels_bunny.png" width="92%" alt="Illustrative sigma_m and rho_T on the Stanford bunny" />
+  <img src="docs/fig1_channels_bunny_lit.png" width="94%" alt="Illustrative sigma_m and rho_T on the Stanford bunny" />
 </p>
 
 <p align="center">
 <em>
 Same two physical channels as Fig.&nbsp;1 of the paper, shown as illustrative
-proxies on the Stanford bunny:
-(a) mean stress $\sigma_{\mathrm{m}}$ (sets lattice / trap occupancy through Oriani);
-(b) dislocation density $\rho_{\mathrm{T}}$ (sets trap-site density via
+proxies on the Stanford bunny:<br/>
+(a)&nbsp;mean stress&nbsp;$\sigma_{\mathrm{m}}$
+(sets lattice / trap occupancy through Oriani);<br/>
+(b)&nbsp;dislocation density&nbsp;$\rho_{\mathrm{T}}$
+(sets trap-site density through
 $N_{\mathrm{T}}=\chi\rho_{\mathrm{T}}/b$).
 </em>
 </p>
+
 ## Overview
 
 MSG plasticity ties the flow stress to statistically stored and geometrically
@@ -30,35 +33,42 @@ necessary dislocations through an intrinsic material length $l$. Matching the
 Taylor model to the uniaxial hardening law gives
 
 $$
-\sigma_e = \sigma_Y\sqrt{f^{2}(\varepsilon_e)+l\,\eta},
+\sigma_e = \sigma_Y \sqrt{f^{2}(\varepsilon_e) + l\,\eta} \,,
 \qquad
-l = 3\alpha^{2}\Bigl(\frac{\mu}{\sigma_Y}\Bigr)^{2}b.
+l = 3\alpha^{2}\left(\frac{\mu}{\sigma_Y}\right)^{2} b \,.
 $$
 
 Because $l$ is built from the same constants that enter the Taylor stress, the
-hydrogen-free dislocation density collapses to
+hydrogen-free dislocation density and trap-site density collapse to
 
 $$
-\rho_T = \frac{f^{2}(\varepsilon_e)+l\,\eta}{l\,b},
+\rho_{\mathrm{T}} = \frac{f^{2}(\varepsilon_e) + l\,\eta}{l\,b} \,,
 \qquad
-N_T = \frac{\chi\rho_T}{b}.
+N_{\mathrm{T}} = \frac{\chi\rho_{\mathrm{T}}}{b}
+= \frac{\chi}{l\,b^{2}}\bigl(f^{2}(\varepsilon_e) + l\,\eta\bigr) \,.
 $$
 
 Under Oriani equilibrium, lattice and trapped occupancies respond to mean stress,
 
 $$
-\theta_L = \theta_L^{0}\exp\!\Bigl(\frac{\sigma_m V_H}{RT}\Bigr),
+\theta_L = \theta_L^{0}
+\exp\!\left(\frac{\sigma_{\mathrm{m}} V_H}{R T}\right) \,,
 \qquad
-\frac{\theta_T}{1-\theta_T}=K_T\frac{\theta_L}{1-\theta_L},
+\frac{\theta_T}{1-\theta_T}
+= K_T \frac{\theta_L}{1-\theta_L} \,,
 \qquad
-K_T=\exp\!\Bigl(\frac{W_B}{RT}\Bigr).
+K_T = \exp\!\left(\frac{W_B}{R T}\right) \,.
 $$
 
 The analytical chapters map this closure onto thin-wire torsion, ultra-thin
 bending, and spherical void growth (size-dependent trap uptake). A finite-strain
 cavitation analysis adds HELP softening
-$\sigma_e^{\mathrm{HELP}}=(1-\xi\theta_T)\sigma_e^{(0)}$. The FEM panels reuse
-the same constitutive ideas on meshes.
+
+$$
+\sigma_e^{\mathrm{HELP}} = (1 - \xi\,\theta_T)\,\sigma_e^{(0)} \,.
+$$
+
+The FEM panels reuse the same constitutive ideas on meshes.
 
 ## Repository layout
 
@@ -127,10 +137,10 @@ Q = torsion_Q(a=1e-6, Gamma=0.05, p=p)
 
 | Quantity | Choice |
 |----------|--------|
-| MSG length $l$ | $\mu_{\mathrm{ref}}/\sigma_Y=200$ (Huang et al.) |
-| FEM elasticity | $E/\sigma_Y=500$, $\nu\approx\tfrac12$ (near-incompressible) |
-| Trap density $N_T$ | Hydrogen-free Taylor density $f^{2}+l\eta$ |
-| HELP | Multiplies flow stress by $(1-\xi\theta_T)$ |
+| MSG length $l$ | $\mu_{\mathrm{ref}}/\sigma_Y = 200$ (Huang et al.) |
+| FEM elasticity | $E/\sigma_Y = 500$, $\nu \approx 1/2$ (near-incompressible) |
+| Trap density $N_{\mathrm{T}}$ | $N_{\mathrm{T}}=\chi\rho_{\mathrm{T}}/b$ with hydrogen-free $\rho_{\mathrm{T}}=[f^{2}+l\eta]/(lb)$ |
+| HELP | Multiplies flow stress by $(1 - \xi\theta_T)$; Formulation C keeps $\rho_{\mathrm{T}}$ hydrogen-free |
 
 ## Requirements
 
