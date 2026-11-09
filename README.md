@@ -1,7 +1,7 @@
 # HydrogenMSG
 
-Companion **code** for the IJSS manuscript on hydrogen transport and trapping
-in mechanism-based strain gradient (MSG) plasticity. The manuscript is published
+Companion **code** for a manuscript on hydrogen transport and trapping in
+mechanism-based strain gradient (MSG) plasticity. The manuscript is published
 separately; this repository contains only the theory, FEM solvers, and figure
 generators.
 
