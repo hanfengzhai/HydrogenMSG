@@ -1,48 +1,71 @@
 # Size-dependent hydrogen trapping in MSG plasticity
 
-Companion code for the paper on hydrogen transport and trapping in
+Companion code for the paper on **hydrogen transport and trapping** in
 mechanism-based strain gradient (MSG) plasticity.
 
-When a metal deforms at small length scales, strain gradients force
-geometrically necessary dislocations (GNDs) to appear. Those dislocations
-add trap sites for hydrogen. The paper works out closed-form MSG–Oriani
-solutions for torsion, bending, and void growth, then uses conventional MSG
-finite elements for non-hydrostatic voids and a Mode-I slit with HELP
-softening. This repository is the theory library and the figure factory used
-to produce the manuscript plots.
+When metals deform at small length scales, strain gradients require
+geometrically necessary dislocations (GNDs). Those dislocations supply trap
+sites for hydrogen. The paper derives closed-form MSG–Oriani solutions for
+torsion, bending, and void growth, then solves conventional MSG finite-element
+problems for non-hydrostatic voids and a Mode-I slit with HELP softening.
+This repository is the theory library and the figure factory behind those plots.
 
 <p align="center">
-  <img src="docs/bunny_mean_stress.png" width="46%" alt="Illustrative mean-stress field on the Stanford bunny" />
-  <img src="docs/bunny_dislocation_density.png" width="46%" alt="Illustrative dislocation / trap-site density on the Stanford bunny" />
+  <img src="docs/bunny_banner.png" width="92%" alt="Illustrative mean stress and dislocation / trap density on the Stanford bunny" />
 </p>
 
-<p align="center"><em>
-Illustrative MSG–hydrogen fields on the Stanford bunny (visualization proxies).<br/>
-Left: mean stress σ<sub>m</sub>/σ<sub>Y</sub>.
-Right: trap-site density N<sub>T</sub> (dislocation-density proxy).
-</em></p>
+<p align="center">
+<em>Illustrative visualization proxies on the Stanford bunny:
+mean stress $\sigma_{\mathrm{m}}/\sigma_{\mathrm{Y}}$ (left) and
+trap-site density $N_{\mathrm{T}}$ as a dislocation-density proxy (right).</em>
+</p>
 
-## What the paper does
+## Overview
 
-1. **Taylor / trap closure.** MSG flow stress and the hydrogen-free dislocation
-   density share the same intrinsic length $l$, so
-   $\rho_T = [f^2(\varepsilon_e)+l\eta]/(l b)$ and $N_T=\chi\rho_T/b$.
-2. **Analytical size effects.** Wire torsion, ultra-thin bending, and spherical
-   void growth: thinner specimens store more GND traps and more trapped hydrogen.
-3. **Cavitation with HELP.** Finite-strain cavitation couples occupancy back into
-   the flow stress through a softening factor $(1-\xi\theta_T)$.
-4. **FEM panels.** Axisymmetric voids and a Mode-I slit check the same constitutive
-   ideas on meshes (hydrogen is an Oriani post-process on the mechanical fields).
+MSG plasticity ties the flow stress to statistically stored and geometrically
+necessary dislocations through an intrinsic material length $l$. Matching the
+Taylor model to the uniaxial hardening law gives
+
+$$
+\sigma_e = \sigma_Y\sqrt{f^{2}(\varepsilon_e)+l\,\eta},
+\qquad
+l = 3\alpha^{2}\Bigl(\frac{\mu}{\sigma_Y}\Bigr)^{2}b.
+$$
+
+Because $l$ is built from the same constants that enter the Taylor stress, the
+hydrogen-free dislocation density collapses to
+
+$$
+\rho_T = \frac{f^{2}(\varepsilon_e)+l\,\eta}{l\,b},
+\qquad
+N_T = \frac{\chi\rho_T}{b}.
+$$
+
+Under Oriani equilibrium, lattice and trapped occupancies respond to mean stress,
+
+$$
+\theta_L = \theta_L^{0}\exp\!\Bigl(\frac{\sigma_m V_H}{RT}\Bigr),
+\qquad
+\frac{\theta_T}{1-\theta_T}=K_T\frac{\theta_L}{1-\theta_L},
+\qquad
+K_T=\exp\!\Bigl(\frac{W_B}{RT}\Bigr).
+$$
+
+The analytical chapters map this closure onto thin-wire torsion, ultra-thin
+bending, and spherical void growth (size-dependent trap uptake). A finite-strain
+cavitation analysis adds HELP softening
+$\sigma_e^{\mathrm{HELP}}=(1-\xi\theta_T)\sigma_e^{(0)}$. The FEM panels reuse
+the same constitutive ideas on meshes.
 
 ## Repository layout
 
-```
+```text
 hydrogenmsg/
-  analytics.py   # closed-form MSG–Oriani model
-  fem/           # void, slit, and canonical FEM solvers
-  plot/          # manuscript figure generators + CLI
-docs/            # README images
-output/          # generated PDF/PNG panels (created when you run the CLI)
+  analytics.py     # closed-form MSG–Oriani model
+  fem/             # void, slit, and canonical FEM solvers
+  plot/            # manuscript figure generators + CLI
+docs/              # README figures
+output/            # generated PDF/PNG panels (from the CLI)
 make_figures.py
 ```
 
@@ -56,55 +79,56 @@ python3 -m pip install -e .
 
 ### Reproduce the manuscript figures
 
-Everything cited in the TeX (fastest useful default):
+Panels cited in the current manuscript TeX:
 
 ```bash
 python3 make_figures.py --manuscript
 ```
 
-All companion panels (includes SI extras):
+All companion panels (including SI extras):
 
 ```bash
 python3 make_figures.py
 ```
 
-One panel, or the FEM mesh drawings:
+Selected panels, mesh drawings, or a listing:
 
 ```bash
-python3 -m hydrogenmsg.plot fig3b
-python3 -m hydrogenmsg.plot --list
+python3 -m hydrogenmsg.plot fig3b fig10a
 python3 -m hydrogenmsg.plot --meshes
+python3 -m hydrogenmsg.plot --list
 ```
 
-Panels land in `output/` as PDF + PNG.
+Outputs are written to `output/` as PDF + PNG.
 
-### Check the solvers against closed forms
+### Verify the FEM against closed forms
 
 ```bash
-python3 -m hydrogenmsg.fem.void        # strain-gradient operator, Lamé limit, plastic void fields
+python3 -m hydrogenmsg.fem.void        # η operator, Lamé limit, plastic void fields
 python3 -m hydrogenmsg.fem.canonical   # torsion / bending vs analytics
 python3 -m hydrogenmsg.fem.slit        # elastic / HELP demos (slower)
 ```
 
-### Use the theory library in Python
+### Call the theory library
 
 ```python
 from hydrogenmsg import Params
 from hydrogenmsg.analytics import torsion_Q, bending_fields, void_fields
 
-p = Params()                 # Huang-style MSG constants, bcc-iron hydrogen data
-print(p.l * 1e6)             # intrinsic length in µm
+p = Params()              # Huang-style MSG constants; bcc-iron hydrogen data
+print(p.l * 1e6)          # intrinsic length [µm]
 Q = torsion_Q(a=1e-6, Gamma=0.05, p=p)
 ```
 
-## Notes on constitutive choices
+## Constitutive notes
 
-- MSG length $l$ uses the constitutive reference $\mu_{\mathrm{ref}}/\sigma_Y=200$.
-- FEM elasticity uses near-incompressible $\nu\approx 1/2$ with the same
-  $E/\sigma_Y$, so $\mu_{\mathrm{FEM}}$ differs from $\mu_{\mathrm{ref}}$ by design.
-- Trap density always uses the hydrogen-free Taylor expression above. HELP
-  multiplies the flow stress by $(1-\xi\theta_T)$.
+| Quantity | Choice |
+|----------|--------|
+| MSG length $l$ | $\mu_{\mathrm{ref}}/\sigma_Y=200$ (Huang et al.) |
+| FEM elasticity | $E/\sigma_Y=500$, $\nu\approx\tfrac12$ (near-incompressible) |
+| Trap density $N_T$ | Hydrogen-free Taylor density $f^{2}+l\eta$ |
+| HELP | Multiplies flow stress by $(1-\xi\theta_T)$ |
 
 ## Requirements
 
-`numpy`, `scipy`, `matplotlib` (see `requirements.txt` / `pyproject.toml`).
+`numpy`, `scipy`, `matplotlib` — see `requirements.txt` / `pyproject.toml`.
