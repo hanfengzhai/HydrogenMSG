@@ -20,7 +20,8 @@ Illustrative proxies of the two Fig.&nbsp;1 channels on one bending field
 mapped to the Stanford bunny:<br/>
 (a)&nbsp;signed mean stress&nbsp;$\sigma_{\mathrm{m}}$
 (sets lattice / trap occupancy through Oriani);<br/>
-(b)&nbsp;dislocation density&nbsp;$\rho_{\mathrm{T}}\propto f^{2}(\varepsilon_e)+l\eta$
+(b)&nbsp;dislocation density
+$\rho_{\mathrm{T}}=[f^{2}(\varepsilon_e)+l\eta]/(lb)$
 from the same bend (outer fibers), which sets
 $N_{\mathrm{T}}=\chi\rho_{\mathrm{T}}/b$.
 </em>
@@ -33,31 +34,27 @@ necessary dislocations through an intrinsic material length $l$. Matching the
 Taylor model to the uniaxial hardening law gives
 
 $$
-\sigma_e = \sigma_Y \sqrt{f^{2}(\varepsilon_e) + l\,\eta} \,,
-\qquad
-l = 3\alpha^{2}\left(\frac{\mu}{\sigma_Y}\right)^{2} b \,.
+\sigma_e = \sigma_Y \sqrt{f^{2}(\varepsilon_e) + l\eta},\qquad
+l = 3\alpha^{2}\left(\frac{\mu}{\sigma_Y}\right)^{2} b.
 $$
 
 Because $l$ is built from the same constants that enter the Taylor stress, the
 hydrogen-free dislocation density and trap-site density collapse to
 
 $$
-\rho_{\mathrm{T}} = \frac{f^{2}(\varepsilon_e) + l\,\eta}{l\,b} \,,
-\qquad
+\rho_{\mathrm{T}} = \frac{f^{2}(\varepsilon_e) + l\eta}{lb},\qquad
 N_{\mathrm{T}} = \frac{\chi\rho_{\mathrm{T}}}{b}
-= \frac{\chi}{l\,b^{2}}\bigl(f^{2}(\varepsilon_e) + l\,\eta\bigr) \,.
+= \frac{\chi}{lb^{2}}\bigl(f^{2}(\varepsilon_e) + l\eta\bigr).
 $$
 
 Under Oriani equilibrium, lattice and trapped occupancies respond to mean stress,
 
 $$
 \theta_L = \theta_L^{0}
-\exp\!\left(\frac{\sigma_{\mathrm{m}} V_H}{R T}\right) \,,
-\qquad
+\exp\left(\frac{\sigma_{\mathrm{m}} V_H}{RT}\right),\qquad
 \frac{\theta_T}{1-\theta_T}
-= K_T \frac{\theta_L}{1-\theta_L} \,,
-\qquad
-K_T = \exp\!\left(\frac{W_B}{R T}\right) \,.
+= K_T \frac{\theta_L}{1-\theta_L},\qquad
+K_T = \exp\left(\frac{W_B}{RT}\right).
 $$
 
 The analytical chapters map this closure onto thin-wire torsion, ultra-thin
@@ -65,7 +62,7 @@ bending, and spherical void growth (size-dependent trap uptake). A finite-strain
 cavitation analysis adds HELP softening
 
 $$
-\sigma_e^{\mathrm{HELP}} = (1 - \xi\,\theta_T)\,\sigma_e^{(0)} \,.
+\sigma_e^{\mathrm{HELP}} = (1 - \xi\theta_T)\sigma_e^{(0)}.
 $$
 
 The FEM panels reuse the same constitutive ideas on meshes.
