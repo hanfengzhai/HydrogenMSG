@@ -11,7 +11,7 @@ problems for non-hydrostatic voids and a Mode-I slit with HELP softening.
 This repository is the theory library and the figure factory behind those plots.
 
 <p align="center">
-  <img src="docs/fig1_channels_bunny_coupled.png" width="94%" alt="Illustrative sigma_m and rho_T on the Stanford bunny" />
+  <img src="docs/fig1_channels_bunny_faceout_v2.png" width="94%" alt="Illustrative sigma_m and rho_T on the Stanford bunny" />
 </p>
 
 <p align="center"><i>
