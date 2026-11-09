@@ -11,7 +11,7 @@ problems for non-hydrostatic voids and a Mode-I slit with HELP softening.
 This repository is the theory library and the figure factory behind those plots.
 
 <p align="center">
-  <img src="docs/bunny_banner.png" width="92%" alt="Illustrative mean stress and dislocation density on the Stanford bunny" />
+  <img src="docs/bunny_sigma_m_rho_T.png" width="92%" alt="Illustrative sigma_m and rho_T on the Stanford bunny" />
 </p>
 
 <p align="center">
