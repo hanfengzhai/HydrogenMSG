@@ -14,18 +14,16 @@ This repository is the theory library and the figure factory behind those plots.
   <img src="docs/fig1_channels_bunny_coupled.png" width="94%" alt="Illustrative sigma_m and rho_T on the Stanford bunny" />
 </p>
 
-<p align="center">
-<em>
+<p align="center"><i>
 Illustrative proxies of the two Fig.&nbsp;1 channels on one bending field
 mapped to the Stanford bunny:<br/>
-(a)&nbsp;signed mean stress&nbsp;$\sigma_{\mathrm{m}}$
+(a)&nbsp;signed mean stress σ<sub>m</sub>
 (sets lattice / trap occupancy through Oriani);<br/>
 (b)&nbsp;dislocation density
-$\rho_{\mathrm{T}}=[f^{2}(\varepsilon_e)+l\eta]/(lb)$
+ρ<sub>T</sub>&nbsp;=&nbsp;[f<sup>2</sup>(ε<sub>e</sub>)&nbsp;+&nbsp;lη]/(lb)
 from the same bend (outer fibers), which sets
-$N_{\mathrm{T}}=\chi\rho_{\mathrm{T}}/b$.
-</em>
-</p>
+N<sub>T</sub>&nbsp;=&nbsp;χρ<sub>T</sub>/b.
+</i></p>
 
 ## Overview
 
