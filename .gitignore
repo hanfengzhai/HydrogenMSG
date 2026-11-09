@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.venv/
+venv/
+.env
+.DS_Store
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Generated figure panels (run scripts/make_figures.py)
+figures/*.pdf
+figures/*.png
+figures/*.json
+!figures/.gitkeep
