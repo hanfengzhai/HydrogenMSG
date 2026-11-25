@@ -234,12 +234,12 @@ def sketch_bending(ax, cx, cy, w, h):
     bending_moment_arcs(ax, xs[0], mid[0], xs[-1], mid[-1], 0.42 * h,
                         gap=0.05, lw=1.0, scale=9, label=True,
                         label_fs=TINY_FS, label_dx=0.02)
-    # Thickness dimension.
+    # Thickness dimension inside the beam with h placed above the extrados.
     xh = cx - 0.18 * w
     ym = float(np.interp(xh, xs, mid))
     dim(ax, (xh, ym - h / 2), (xh, ym + h / 2))
-    ax.text(xh - 0.04 * w, ym, r"$h$", fontsize=TINY_FS, ha="right",
-            va="center", color=MECH)
+    ax.text(xh, ym + 0.62 * h, r"$h$", fontsize=TINY_FS, ha="center",
+            va="bottom", color=MECH)
     ax.text(cx, cy - 1.35 * h, r"$\kappa$", ha="center", va="top",
             fontsize=TINY_FS, color=MECH)
 
@@ -247,8 +247,8 @@ def sketch_bending(ax, cx, cy, w, h):
 def sketch_void(ax, cx, cy, r):
     """Remote hydrostatic tension on a large outer boundary; free void wall."""
     R0 = r
-    Rout = 2.1 * r
-    Rg = 1.3 * r
+    Rout = 1.95 * r
+    Rg = 1.30 * r
     ax.add_patch(Circle((cx, cy), Rout, facecolor="0.965", edgecolor=EDGE,
                         lw=0.7))
     ax.add_patch(Wedge((cx, cy), Rg, 0, 360, width=Rg - R0,
@@ -263,11 +263,9 @@ def sketch_void(ax, cx, cy, r):
               color=MECH, lw=0.75, scale=4.5)
     ax.text(cx, cy - 1.30 * Rout, r"$\sigma^{\infty}$", ha="center",
             va="top", fontsize=TINY_FS, color=MECH)
-    ax.text(cx, cy + 0.15 * R0, "Free", ha="center", va="bottom",
-            fontsize=TINY_FS, color="0.4")
     dim(ax, (cx, cy), (cx + R0, cy))
-    ax.text(cx + 0.55 * R0, cy - 0.22 * R0, r"$R_0$", fontsize=TINY_FS,
-            ha="center", va="top", color=MECH)
+    ax.text(cx + 0.48 * R0, cy + 0.18 * R0, r"$R_0$", fontsize=TINY_FS,
+            ha="center", va="bottom", color=MECH)
 
 
 # ----------------------------------------------------------------------
@@ -282,7 +280,7 @@ def draw_coupling_chain(ax, W, H):
 
     Sequence: kinematics -> (eps_e, eta) -> MSG/Taylor -> (rho_T, sigma_e)/N_T.
     Mean stress comes from higher-order equilibrium and BCs (Eq. 6).
-    HELP is a phenomenological amplitude loop only (Formulation A); the
+    HELP is a phenomenological amplitude loop only (Formulation C); the
     trap-density identity is not updated under that loop.
     """
     white, key = "white", "0.94"  # gray!10
@@ -301,7 +299,7 @@ def draw_coupling_chain(ax, W, H):
     cx = 0.5 * (lx + rx)
 
     def box(xc, yc, w, title, equation, fc=white):
-        tbox(ax, xc, yc, w, bh, title, equation, fc=fc, weight="bold",
+        tbox(ax, xc, yc, w, bh, title, equation, fc=fc, weight="normal",
              edgecolor="black", lw=lw, rounding=0.09)
 
     box(cx, lvl[0], tw,
@@ -324,7 +322,7 @@ def draw_coupling_chain(ax, W, H):
 
     box(lx, lvl[4], bw,
         "Higher-order equilibrium and BCs",
-        r"$\sigma'_{ik,i}-\tau'_{ijk,ij}+H_{,k}=0$")
+        r"$s_{ik,i}-\tau'_{ijk,ij}+H_{,k}=0$")
 
     box(lx, lvl[5], bw,
         "Mean stress",
@@ -332,7 +330,7 @@ def draw_coupling_chain(ax, W, H):
 
     box(lx, lvl[6], bw,
         "Lattice occupancy",
-        r"$\theta_{\mathrm{L}}\propto e^{\sigma_{\mathrm{m}}"
+        r"$\theta_{\mathrm{L}}/(1-\theta_{\mathrm{L}})\propto e^{\sigma_{\mathrm{m}}"
         r"\bar{V}_{\mathrm{H}}/RT}$")
 
     box(lx, lvl[7], bw,
@@ -371,9 +369,9 @@ def draw_coupling_chain(ax, W, H):
           (rx - bw / 2 - 0.01 * W, lvl[7]),
           color="black", lw=lw, scale=arr_scale)
 
-    # HELP: phenomenological amplitude correction only (Formulation A).
+    # HELP: phenomenological amplitude correction only (Formulation C).
     # Dashed feedback loop only — no side label; the figure caption names it.
-    chan = lx - 0.5 * bw - 0.08 * W
+    chan = lx - 0.5 * bw - 0.06 * W
     feed = "0.45"
     ax.plot([lx - bw / 2, chan], [lvl[7], lvl[7]], ls=(0, (3, 2.5)),
             color=feed, lw=lw)
@@ -381,7 +379,7 @@ def draw_coupling_chain(ax, W, H):
             lw=lw)
     arrow(ax, (chan, lvl[3]), (lx - bw / 2, lvl[3]), color=feed, lw=lw,
           ls=(0, (3, 2.5)), scale=arr_scale)
-    ax.set_xlim(-0.02 * W, W)
+    ax.set_xlim(-0.045 * W, W)
     ax.set_ylim(0, H)
 
 
@@ -409,7 +407,7 @@ def draw_problems_thumbnails(ax, W, H):
         elif kind == "bending":
             sketch_bending(ax, gx, y0 + 0.54 * h, 0.56 * W, 0.20 * h)
         else:
-            sketch_void(ax, gx, y0 + 0.50 * h, 0.120 * h)
+            sketch_void(ax, gx, y0 + 0.50 * h, 0.145 * h)
 
     ax.set_xlim(0, W)
     ax.set_ylim(0, H)
@@ -616,26 +614,33 @@ def draw_bending_hydrogen(ax, z, cL, cT):
 
 
 def draw_void_geometry(ax, W, H):
-    """Void schematic panel (a): remote hydrostatic tension, free wall, GND shell."""
+    """Void schematic panel (a): remote hydrostatic tension, free wall, GND shell.
+
+    The outer field is unbounded: dashed continuation arcs replace a closed
+    finite outer circle, matching the figure caption.
+    """
     cx, cy = W / 2, 0.52 * H
     # Larger radii so size-15 labels fit without overlapping.
     R0, Rg, Rout = 0.45, 0.80, 1.30
 
-    ax.add_patch(Circle((cx, cy), Rout, facecolor="0.965", edgecolor=EDGE,
-                        lw=0.9))
+    ax.add_patch(Circle((cx, cy), Rout, facecolor="0.965", edgecolor="none"))
+    for ang0, ang1 in ((20, 70), (110, 160), (200, 250), (290, 340)):
+        th = np.linspace(np.deg2rad(ang0), np.deg2rad(ang1), 40)
+        ax.plot(cx + Rout * np.cos(th), cy + Rout * np.sin(th),
+                color=EDGE, lw=0.9, ls=(0, (3, 2)), solid_capstyle="round")
     ax.add_patch(Wedge((cx, cy), Rg, 0, 360, width=Rg - R0,
                        facecolor=FILL2, edgecolor="none"))
     ax.add_patch(Circle((cx, cy), R0, facecolor="white", edgecolor=EDGE,
                         lw=1.1))
 
-    # Remote tractions on the outer boundary (not near the void wall).
-    for ang in (15, 60, 105, 150, 195, 240, 285, 330):
+    # Remote tractions on the outer continuation arcs.
+    for ang in (45, 135, 225, 315):
         th = np.deg2rad(ang)
         arrow(ax, (cx + 1.02 * Rout * np.cos(th), cy + 1.02 * Rout * np.sin(th)),
               (cx + 1.16 * Rout * np.cos(th), cy + 1.16 * Rout * np.sin(th)),
               color=MECH, lw=0.9, scale=7)
     th = np.deg2rad(125)
-    ax.text(cx + 1.28 * Rout * np.cos(th), cy + 1.28 * Rout * np.sin(th),
+    ax.text(cx + 1.18 * Rout * np.cos(th), cy + 1.18 * Rout * np.sin(th),
             r"$\sigma^{\infty}$", ha="center", va="center",
             fontsize=LABEL_FS, color=MECH)
 
@@ -648,8 +653,13 @@ def draw_void_geometry(ax, W, H):
             fontsize=TINY_FS, color="0.30")
 
     dim(ax, (cx, cy), (cx, cy - R0))
-    ax.text(cx - 0.16, cy - 0.72 * R0, r"$R_0$", fontsize=TINY_FS,
+    ax.text(cx - 0.16, cy - 0.55 * R0, r"$R_0$", fontsize=TINY_FS,
             ha="right", va="center")
+    # Spherical radial coordinate R through the near-surface layer.
+    arrow(ax, (cx, cy), (cx + 0.92 * Rg, cy + 0.92 * Rg * 0.15),
+          color=EDGE, lw=0.75, scale=6)
+    ax.text(cx + 0.62 * Rg, cy + 0.28 * Rg, r"$R$", fontsize=TINY_FS,
+            ha="left", va="bottom", color=EDGE)
     # Wall displacement u_0: radial at the equator (3 o'clock).
     arrow(ax, (cx + R0, cy), (cx + R0 + 0.40, cy),
           color=HYDR, lw=0.8, scale=6)
@@ -809,8 +819,8 @@ def make_fig8a():
     rect = [0.08, 0.12, 0.84, 0.78]
     ax = geom_panel(fig, rect, figsize)
     draw_void_geometry(ax, rect[2] * figsize[0], rect[3] * figsize[1])
-    fit_geom_panel(fig, ax, pad=0.08, min_size=4.2)
-    save(fig, "fig8a.pdf")
+    fit_geom_panel(fig, ax, pad=0.12, min_size=4.2)
+    save(fig, "fig8a.pdf", pad_inches=0.03)
 
 
 def make_fig8b():
@@ -834,79 +844,59 @@ def make_fig8c():
 
 
 def draw_cavitation_geometry(ax, W, H):
-    """Finite-strain cavitation geometry: $R_0\\to r_0$, far-field $\\sigma^\\infty$.
+    """Finite-strain cavitation schematic: R0 -> r0 under remote tension."""
+    cx, cy = W / 2, 0.52 * H
+    R0, r0, Rout = 0.34, 0.64, 1.12
 
-    Matches the manuscript caption: initial void radius $R_0$, current wall
-    $r_0$, material map $R\\to r$, dashed outer arcs for the unbounded far field.
-    """
-    cx, cy = 0.50 * W, 0.52 * H
-    R0 = 0.38
-    r0 = 0.62
-    Rout = 1.35
-
-    # Far-field disk (unbounded domain cue).
     ax.add_patch(Circle((cx, cy), Rout, facecolor="0.965", edgecolor="none"))
-    th = np.linspace(0, 2 * np.pi, 120)
-    for frac in (0.92, 1.0):
-        ax.plot(
-            cx + frac * Rout * np.cos(th),
-            cy + frac * Rout * np.sin(th),
-            color=EDGE, lw=0.8, ls=(0, (2.5, 2.0)), solid_capstyle="round",
-        )
+    for ang0, ang1 in ((15, 65), (105, 155), (195, 245), (285, 335)):
+        th = np.linspace(np.deg2rad(ang0), np.deg2rad(ang1), 40)
+        ax.plot(cx + Rout * np.cos(th), cy + Rout * np.sin(th),
+                color=EDGE, lw=0.9, ls=(0, (3, 2)), solid_capstyle="round")
 
     # Current void wall (solid) and initial wall (dashed).
-    ax.add_patch(Circle((cx, cy), r0, facecolor="white", edgecolor=EDGE, lw=1.15))
-    ax.plot(
-        cx + R0 * np.cos(th), cy + R0 * np.sin(th),
-        color="0.45", lw=0.9, ls=(0, (3, 2)),
-    )
+    ax.add_patch(Circle((cx, cy), r0, facecolor="white", edgecolor=EDGE,
+                        lw=1.1))
+    th = np.linspace(0, 2 * np.pi, 120)
+    ax.plot(cx + R0 * np.cos(th), cy + R0 * np.sin(th),
+            color="0.45", lw=0.9, ls=(0, (4, 2)))
 
-    # Remote hydrostatic tension.
-    for ang in (20, 70, 110, 160, 200, 250, 290, 340):
-        a = np.deg2rad(ang)
-        arrow(
-            ax,
-            (cx + 1.02 * Rout * np.cos(a), cy + 1.02 * Rout * np.sin(a)),
-            (cx + 1.16 * Rout * np.cos(a), cy + 1.16 * Rout * np.sin(a)),
-            color=MECH, lw=0.9, scale=7,
-        )
-    ax.text(
-        cx - 1.22 * Rout, cy + 1.05 * Rout, r"$\sigma^{\infty}$",
-        ha="center", va="center", fontsize=LABEL_FS, color=MECH,
-    )
+    for ang in (45, 135, 225, 315):
+        th = np.deg2rad(ang)
+        arrow(ax, (cx + 1.02 * Rout * np.cos(th), cy + 1.02 * Rout * np.sin(th)),
+              (cx + 1.16 * Rout * np.cos(th), cy + 1.16 * Rout * np.sin(th)),
+              color=MECH, lw=0.9, scale=7)
+    th = np.deg2rad(125)
+    ax.text(cx + 1.28 * Rout * np.cos(th), cy + 1.28 * Rout * np.sin(th),
+            r"$\sigma^{\infty}$", ha="center", va="center",
+            fontsize=LABEL_FS, color=MECH)
 
-    # Radii at the equator.
-    arrow(ax, (cx, cy), (cx + R0, cy), color=EDGE, lw=0.7, scale=5)
-    ax.text(cx + 0.52 * R0, cy - 0.12, r"$R_0$", fontsize=TINY_FS,
-            ha="center", va="top")
-    arrow(ax, (cx, cy), (cx + r0, cy), color=EDGE, lw=0.7, scale=5)
-    ax.text(cx + 0.72 * r0, cy + 0.10, r"$r_0$", fontsize=TINY_FS,
+    dim(ax, (cx, cy), (cx, cy - R0))
+    ax.text(cx - R0 - 0.06, cy - 0.55 * R0, r"$R_0$", fontsize=TINY_FS,
+            ha="right", va="center", color="0.35")
+    dim(ax, (cx, cy), (cx + r0, cy))
+    ax.text(cx + 0.45 * (R0 + r0), cy + 0.30, r"$r_0$", fontsize=TINY_FS,
             ha="center", va="bottom")
-
-    # Material map R → r in the solid.
-    ang = np.deg2rad(-35)
-    p0 = (cx + 0.78 * r0 * np.cos(ang), cy + 0.78 * r0 * np.sin(ang))
-    p1 = (cx + 1.05 * Rout * np.cos(ang), cy + 1.05 * Rout * np.sin(ang))
-    arrow(ax, p0, p1, color=EDGE, lw=0.8, scale=6)
-    ax.text(
-        cx + 1.18 * Rout * np.cos(ang), cy + 1.18 * Rout * np.sin(ang),
-        r"$R\rightarrow r$", fontsize=TINY_FS, ha="left", va="center",
-    )
-
+    arrow(ax, (cx, cy), (cx + 0.90 * Rout * np.cos(np.deg2rad(-40)),
+                         cy + 0.90 * Rout * np.sin(np.deg2rad(-40))),
+          color=EDGE, lw=0.75, scale=6)
+    ax.text(cx + 0.72 * Rout * np.cos(np.deg2rad(-52)),
+            cy + 0.72 * Rout * np.sin(np.deg2rad(-52)) - 0.08,
+            r"$R\to r$", fontsize=TINY_FS, ha="center", va="top",
+            color=EDGE)
     ax.set_xlim(0, W)
     ax.set_ylim(0, H)
 
 
 def make_fig_cavitation_geom():
-    """Manuscript Fig. cavitation geometry (finite-strain void expansion)."""
     _apply_schematic_style()
-    figsize = (4.6, 4.8)
+    figsize = (5.4, 5.8)
     fig = plt.figure(figsize=figsize)
-    rect = [0.06, 0.06, 0.88, 0.88]
+    rect = [0.08, 0.10, 0.84, 0.82]
     ax = geom_panel(fig, rect, figsize)
     draw_cavitation_geometry(ax, rect[2] * figsize[0], rect[3] * figsize[1])
-    fit_geom_panel(fig, ax, pad=0.08, min_size=3.5)
-    save(fig, "fig_cavitation_geom.pdf")
+    fit_geom_panel(fig, ax, pad=0.14, min_size=3.5)
+    save(fig, "fig_cavitation_geom.pdf", pad_inches=0.03)
 
 
 # ----------------------------------------------------------------------
@@ -915,16 +905,16 @@ def make_fig_cavitation_geom():
 
 def compose_fig_overview():
     _apply_schematic_style()
-    figsize = (FIGW, 8.2)
+    figsize = (16.5, 11.5)
     fig = plt.figure(figsize=figsize)
-    ty = 0.945
+    ty = 0.955
 
-    rect_a = [0.030, 0.030, 0.420, 0.870]
+    rect_a = [0.020, 0.030, 0.515, 0.885]
     ax = geom_panel(fig, rect_a, figsize, "a",
                     "Coupled MSG-hydrogen chain", ty)
     draw_coupling_chain(ax, rect_a[2] * figsize[0], rect_a[3] * figsize[1])
 
-    rect_b = [0.530, 0.030, 0.445, 0.870]
+    rect_b = [0.555, 0.030, 0.420, 0.885]
     ax = geom_panel(fig, rect_b, figsize, "b", "Problems", ty)
     draw_problems_thumbnails(ax, rect_b[2] * figsize[0],
                              rect_b[3] * figsize[1])

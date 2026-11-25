@@ -22,6 +22,8 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
+_trapz = getattr(np, "trapezoid", None) or getattr(np, "trapz")
+
 R_GAS = 8.314  # J/(mol K)
 
 
@@ -155,7 +157,7 @@ def torsion_torque(kappa_a, l_over_a, p: Params, n=400):
     dff = p.N * ff / eps                    # f'(eps) = N f / eps
     integrand = x * ((x**2 + le_a**2 / 12.0) * sig / eps
                      + (le_a**2 / 12.0) * ff * dff / sig)
-    return (2.0 * np.pi / 3.0) * kappa_a * np.trapz(integrand, x)
+    return (2.0 * np.pi / 3.0) * kappa_a * _trapz(integrand, x)
 
 
 def torsion_cT_profile(r_over_a, Gamma, l_over_a, p: Params):
@@ -206,7 +208,7 @@ def bending_moment(kappa_h, l_over_h, p: Params, n=400):
     z = np.linspace(1e-6, 0.5, n)
     eps = 2.0 * kappa_h * z / np.sqrt(3.0)
     sig = np.sqrt(f_power(eps, p) ** 2 + l_over_h * kappa_h)
-    return (4.0 / np.sqrt(3.0)) * np.trapz(z * sig, z)
+    return (4.0 / np.sqrt(3.0)) * _trapz(z * sig, z)
 
 
 def bending_average_uptake(h, eps_s, p: Params, n=801, exclude_core=False):
@@ -222,7 +224,7 @@ def bending_average_uptake(h, eps_s, p: Params, n=801, exclude_core=False):
     z = np.linspace(-0.5, 0.5, n)
     F = bending_fields(z, eps_s, l_over_h, p)
     if not exclude_core:
-        return np.trapz(F["cL_rel"], z), np.trapz(F["cT_norm"], z)
+        return _trapz(F["cL_rel"], z), _trapz(F["cT_norm"], z)
     gap = min(0.45, p.l_eps / h)
     mask = np.abs(z) >= gap
     if not np.any(mask):
@@ -239,7 +241,7 @@ def bending_average_uptake(h, eps_s, p: Params, n=801, exclude_core=False):
                 continue
             zz = z_m[sel]
             vv = vals[sel]
-            acc += float(np.trapz(vv, zz))
+            acc += float(_trapz(vv, zz))
             span += float(zz[-1] - zz[0])
         return acc / span if span > 0 else np.nan
     return _avg(F["cL_rel"][mask]), _avg(F["cT_norm"][mask])
@@ -278,7 +280,7 @@ def void_remote_stress(delta, l_over_R0, p: Params, s_max=1e3, n=2000):
     eps = 2.0 * delta / s**3
     l_eta = 3.0 * np.sqrt(2.5) * delta * l_over_R0 / s**4
     sig = np.sqrt(f_power(eps, p) ** 2 + l_eta)
-    return 2.0 * np.trapz(sig / s, s)
+    return 2.0 * _trapz(sig / s, s)
 
 
 # ----------------------------------------------------------------------
@@ -318,7 +320,7 @@ def cavitation_sigma_inf(r0_over_R0, l_over_R0, p: Params,
             break
         soft = soft_new
     sig = soft * base
-    sigma_inf = 2.0 * np.trapz(sig / s, s)
+    sigma_inf = 2.0 * _trapz(sig / s, s)
     return sigma_inf, dict(s=s, sig=sig, soft=soft)
 
 

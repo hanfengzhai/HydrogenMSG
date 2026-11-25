@@ -526,6 +526,8 @@ def verify_void(l_over_R0=1.0, s_max=2.0):
     _, sm = radial_profile(sol, "sig_m_hat")
     _, le = radial_profile(sol, "l_eta")
     _, ee = radial_profile(sol, "eps_e")
+    _, cL = radial_profile(sol, "cL_rel")
+    _, cT = radial_profile(sol, "cT_norm")
     d = sol["delta"]
     an = void_fields(R, d, l_over_R0, sol["p"])
     m = R <= s_max
@@ -536,7 +538,9 @@ def verify_void(l_over_R0=1.0, s_max=2.0):
     out = dict(delta=d,
                eps_e=err(ee, 2.0 * d / R ** 3),
                sig_e=err(se, an["sig_e_hat"]),
-               sig_m=err(sm, an["sig_m_hat"]))
+               sig_m=err(sm, an["sig_m_hat"]),
+               c_L=err(cL, an["cL_rel"]),
+               c_T=err(cT, an["cT_norm"]))
     if l_over_R0 > 0.0:
         out["l_eta"] = err(le, 3.0 * np.sqrt(2.5) * d * l_over_R0 / R ** 4)
     return out
@@ -552,10 +556,11 @@ if __name__ == "__main__":
           f"  sigma_m {e['sig_m']:.2%}, sigma_e {e['sig_e']:.2%},"
           f" u0 {e['delta']:.2%}")
 
-    for lr in (0.0, 1.0, 5.0):
+    for lr in (0.0, 1.0, 5.0, 10.0):
         v = verify_void(lr)
         grad = f" l*eta {v['l_eta']:.2%}," if "l_eta" in v else ""
         print(f"plastic fields vs closed form, l/R0 = {lr}"
               f" (delta = {v['delta']:.4f}, R <= 2 R0):"
               f"  eps_e {v['eps_e']:.2%},{grad}"
-              f" sigma_e {v['sig_e']:.2%}, sigma_m {v['sig_m']:.2%}")
+              f" sigma_e {v['sig_e']:.2%}, sigma_m {v['sig_m']:.2%},"
+              f" c_L {v['c_L']:.2%}, c_T {v['c_T']:.2%}")

@@ -100,7 +100,7 @@ def get_slit_sol():
               f"l/a={SLIT_L_OVER_A}, S={SLIT_S}) ...")
         sol = solve_slit(l_over_a=SLIT_L_OVER_A, S=SLIT_S, p=p, **SLIT_MESH)
         print(f"  iters={sol['iters']}, resid={sol['resid']:.2e}, "
-              f"COD/a={sol['cod']:.4e}, soft_min={sol['soft'].min():.3f}")
+              f"half-COD/a={sol['cod']:.4e}, soft_min={sol['soft'].min():.3f}")
         _slit_data = dict(p=p, sol=sol)
     return _slit_data
 
@@ -217,8 +217,8 @@ def draw_fig11e(ax, sol=None, p=None):
     Rp = R[np.argmax(ee < eY)] if np.any(ee < eY) else R[-1]
     # Blue tint denotes the elastic field region, not extrapolation.
     ax.axvspan(Rp, 4.0, color="#DCEAF4", zorder=0, lw=0)
-    ax.text(3.92, 4.3, "Elastic", color="0.40", fontsize=FONT_SIZE,
-            ha="right", va="top")
+    ax.text(3.85, 1.50, "Elastic", color="0.40", fontsize=FONT_SIZE,
+            ha="right", va="center")
 
     ax.set_xscale("log")
     ax.set_yscale("log")
@@ -264,7 +264,7 @@ def draw_fig11f(ax, msg=None, cla=None):
     ax.annotate("", xy=(1.06, cm), xytext=(1.06, cc),
                 arrowprops=dict(arrowstyle="<->", color="0.25", lw=0.8,
                                 shrinkA=0, shrinkB=0))
-    ax.text(1.09, 0.5 * (cm + cc), r"$+%.0f\%%$" % (100 * (cm / cc - 1)),
+    ax.text(1.26, 0.55 * cm + 0.45 * cc, r"$+%.0f\%%$" % (100 * (cm / cc - 1)),
             color="0.25", fontsize=FONT_SIZE, va="center", ha="left")
 
 
@@ -652,7 +652,7 @@ def draw_slit_contour(ax, fig, sol, key, cmap, *, label=None, nlev=12,
         lo, hi = -lim, lim
     elif abs(hi - lo) < 1e-14:
         hi = lo + 1e-14
-    lev = np.linspace(lo, hi, nlev)
+    lev = np.linspace(lo, hi, nlev + 2)[1:-1]
     cf = ax.imshow(
         Fi, origin="lower", aspect="equal", cmap=cmap,
         extent=(xi[0], xi[-1], yi[0], yi[-1]),
@@ -670,20 +670,22 @@ def draw_slit_contour(ax, fig, sol, key, cmap, *, label=None, nlev=12,
 
 
 def draw_slit_schematic(ax):
-    """Mode-I notched-plate schematic (tip-centred square of side 2a)."""
-    from matplotlib.patches import Circle, FancyArrowPatch, Rectangle
+    """Mode-I center-crack tip window (side 2a; x = 0 symmetry on the left)."""
+    from matplotlib.patches import Circle, FancyArrowPatch
 
     fs = FONT_SIZE
-    # Unit square in tip-centred coords: tip at (0,0), mouth at (-1,0).
-    ax.add_patch(Rectangle((-1, -1), 2, 2, fill=False, ec="0.15", lw=1.4,
-                           zorder=3))
-    # Notch (open slit).
+    # Left border x = -1 is symmetry plane x = 0; top/right/bottom are interior cuts.
+    ax.plot([-1.0, -1.0], [-1.0, 1.0], color="0.15", lw=1.4, zorder=3)
+    ax.plot([-1.0, 1.0, 1.0, -1.0], [1.0, 1.0, -1.0, -1.0],
+            color="0.25", lw=1.1, ls=(0, (4, 3)), zorder=3)
+    # Traction-free slit [-1, 0] and ligament symmetry plane [0, 1].
     ax.plot([-1.0, 0.0], [0.0, 0.0], color="0.15", lw=2.2, solid_capstyle="butt",
             zorder=4)
+    ax.plot([0.0, 1.0], [0.0, 0.0], color="0.50", lw=0.8, ls=(0, (3, 2)),
+            zorder=2)
     ax.plot([0.0], [0.0], "o", color="0.15", ms=4.0, zorder=5)
-    ax.text(-0.52, 0.10, "Notch", fontsize=fs, color="0.2", ha="center")
+    ax.text(-0.52, 0.11, "Slit", fontsize=fs, color="0.2", ha="center")
 
-    # Dimension ticks: a left (notch), a right (ligament), a above/below.
     def _dim_h(y, x0, x1, label, label_y):
         ax.plot([x0, x1], [y, y], color="0.25", lw=0.7)
         ax.plot([x0, x0], [y - 0.04, y + 0.04], color="0.25", lw=0.7)
@@ -698,27 +700,30 @@ def draw_slit_schematic(ax):
         ax.text(label_x, 0.5 * (y0 + y1), label, ha="center", va="center",
                 fontsize=fs)
 
-    _dim_h(-1.12, -1.0, 0.0, r"$a$", -1.24)
-    _dim_h(-1.12, 0.0, 1.0, r"$a$", -1.24)
-    _dim_v(-1.12, 0.0, 1.0, r"$a$", -1.26)
-    _dim_v(-1.12, -1.0, 0.0, r"$a$", -1.26)
+    _dim_h(-0.62, -1.0, 0.0, r"$a$", -0.76)
+    _dim_h(-0.62, 0.0, 1.0, r"$a$", -0.76)
+    _dim_v(1.12, 0.0, 1.0, r"$a$", 1.25)
+    _dim_v(1.12, -1.0, 0.0, r"$a$", 1.25)
 
-    # Remote tension on top (matches FEM traction loading).
-    for x in np.linspace(-0.85, 0.85, 7):
+    # Symmetric mode-I remote tension on mirrored top and bottom window edges.
+    for x in np.linspace(-0.78, 0.78, 7):
         ax.add_patch(FancyArrowPatch(
-            (x, 1.02), (x, 1.16), arrowstyle="-|>", mutation_scale=9,
+            (x, 1.03), (x, 1.18), arrowstyle="-|>", mutation_scale=9,
             lw=0.9, color="0.15", shrinkA=0, shrinkB=0))
-    ax.text(0.0, 1.22, r"$\sigma^{\infty}$", ha="center", va="bottom",
+        ax.add_patch(FancyArrowPatch(
+            (x, -1.03), (x, -1.18), arrowstyle="-|>", mutation_scale=9,
+            lw=0.9, color="0.15", shrinkA=0, shrinkB=0))
+    ax.text(0.0, 1.24, r"$\sigma^{\infty}$", ha="center", va="bottom",
             fontsize=fs)
 
-    # Bottom rollers (uy = 0) and one side roller (ux = 0).
-    for x in np.linspace(-0.75, 0.75, 5):
-        ax.add_patch(Circle((x, -1.07), 0.04, facecolor="w", edgecolor="0.15",
+    # Quarter-model symmetry rollers (ux = 0) on the left plane x = 0.
+    for y in (-0.82, -0.44, 0.44, 0.82):
+        ax.add_patch(Circle((-1.07, y), 0.038, facecolor="w", edgecolor="0.15",
                             lw=0.7, zorder=4))
-        ax.plot([x - 0.055, x + 0.055], [-1.12, -1.12], color="0.15", lw=0.7)
-    ax.add_patch(Circle((1.07, -1.0), 0.04, facecolor="w", edgecolor="0.15",
-                        lw=0.7, zorder=4))
-    ax.plot([1.12, 1.12], [-1.055, -0.945], color="0.15", lw=0.7)
+    ax.plot([-1.12, -1.12], [-0.90, -0.36], color="0.15", lw=0.7)
+    ax.plot([-1.12, -1.12], [0.36, 0.90], color="0.15", lw=0.7)
+    ax.text(-1.22, 0.0, r"$u_x=0$", ha="center", va="center", rotation=90,
+            fontsize=fs - 2)
 
     # Fixed data window (no aspect box resize) matches the mesh panel.
     ax.set_xlim(-1.35, 1.35)

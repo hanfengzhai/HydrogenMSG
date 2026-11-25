@@ -305,9 +305,12 @@ def _artist_data_extents(ax, renderer):
     def _add_box(x0, x1, y0, y1):
         _add_xy([x0, x1], [y0, y1])
 
-    skip = {ax.patch}
+    from matplotlib.spines import Spine
+
+    skip = {ax.patch, ax.title, ax.xaxis.label, ax.yaxis.label}
+    skip.update(ax.spines.values())
     for art in ax.get_children():
-        if art in skip or not art.get_visible():
+        if art in skip or not art.get_visible() or isinstance(art, Spine):
             continue
         if isinstance(art, Circle):
             c = art.center
@@ -341,6 +344,11 @@ def _artist_data_extents(ax, renderer):
             except Exception:
                 pass
         elif isinstance(art, Text):
+            try:
+                if not art.get_transform().contains_branch(ax.transData):
+                    continue
+            except Exception:
+                continue
             pos = art.get_position()
             # Small pad around the anchor so labels are not clipped.
             _add_box(pos[0] - 0.12, pos[0] + 0.12,

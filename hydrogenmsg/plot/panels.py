@@ -139,7 +139,7 @@ MANUSCRIPT_ORDER: tuple[str, ...] = (
     "fig9a", "fig9b", "fig9d",
     "fig_cavitation_geom",
     "fig10a", "fig10b",
-    "fig11a", "fig11c", "fig11d", "fig11f",
+    "fig11a", "fig11c", "fig11d", "fig11e", "fig11f",
     "fig12mesh",
     "fig12a", "fig12b", "fig12c", "fig12d", "fig12e", "fig12f",
 )

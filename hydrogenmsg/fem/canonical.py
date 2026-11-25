@@ -84,18 +84,18 @@ def _gauss_points(mesh, n_gp=3):
     for e, nodes in enumerate(mesh["conn"]):
         xe = mesh["coords"][nodes]
         k = 0
-        for a, wa in enumerate(gp):
-            for b, wb in enumerate(gp):
-                N = _q9_shape(gp[a], gp[b])
+        for (xi, wa) in zip(gp, gw):
+            for (et, wb) in zip(gp, gw):
+                N = _q9_shape(xi, et)
                 # parent derivatives for Jacobian
-                lx = np.array([0.5 * gp[a] * (gp[a] - 1.0),
-                               1.0 - gp[a] * gp[a],
-                               0.5 * gp[a] * (gp[a] + 1.0)])
-                ly = np.array([0.5 * gp[b] * (gp[b] - 1.0),
-                               1.0 - gp[b] * gp[b],
-                               0.5 * gp[b] * (gp[b] + 1.0)])
-                dx = np.array([gp[a] - 0.5, -2.0 * gp[a], gp[a] + 0.5])
-                dy = np.array([gp[b] - 0.5, -2.0 * gp[b], gp[b] + 0.5])
+                lx = np.array([0.5 * xi * (xi - 1.0),
+                               1.0 - xi * xi,
+                               0.5 * xi * (xi + 1.0)])
+                ly = np.array([0.5 * et * (et - 1.0),
+                               1.0 - et * et,
+                               0.5 * et * (et + 1.0)])
+                dx = np.array([xi - 0.5, -2.0 * xi, xi + 0.5])
+                dy = np.array([et - 0.5, -2.0 * et, et + 0.5])
                 dN_dxi = np.outer(ly, dx).ravel()
                 dN_det = np.outer(dy, lx).ravel()
                 J = np.array([dN_dxi @ xe, dN_det @ xe]).T
@@ -138,12 +138,8 @@ def solve_torsion(Gamma=0.05, l_over_a=2.0, p=None, n_r=18, n_th=14):
     cT_prof = cT_norm.ravel()[order]
     se_prof = (sig_e / p.sigY).ravel()[order]
 
-    # Torque from the FE radial profile: T = 2 pi ∫ tau(r) r^2 dr
-    # Deduplicate nearly coincident radii for a stable trapezoid rule.
-    rr = rf[order]
-    tau = (sig_e.ravel()[order]) / np.sqrt(3.0)
-    keep = np.concatenate([[True], np.diff(rr) > 1e-12 * a])
-    T = 2.0 * np.pi * np.trapz(tau[keep] * rr[keep] ** 2, rr[keep])
+    # Torque evaluated directly using the Q9 area weights: T = 4 sum_quad w * r * tau(r)
+    T = 4.0 * float(np.sum(w * r * (sig_e / np.sqrt(3.0))))
     T_hat = T / (p.sigY * a ** 3)
 
     return dict(

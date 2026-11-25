@@ -388,18 +388,21 @@ def solve(l_over_a=5.0, S=1.0, p=None, a=None,
         return dict(eps=eps, dev=dev, tr=tr, eps_e=eps_e, eta=eta,
                     sig_e=sig_e, mu=mu_s, soft=soft)
 
-    # Simple load ramp: a few proportional steps improve secant convergence
-    # under HELP softening near the tip.
+    # Proportional load ramp; unused early-step iterations roll into later
+    # steps so the final HELP-softened tip solve gets enough secant budget.
     n_ramp = 4
     resid = np.inf
     resid_mu = np.inf
     it_total = 0
+    iters_left = int(itmax)
     if progress is not None:
         progress(0.05, "Mesh ready — starting load ramp")
     for step in range(1, n_ramp + 1):
         load_fac = step / n_ramp
         fstep = load_fac * fext
-        for it in range(itmax // n_ramp):
+        steps_left = n_ramp - step + 1
+        budget = max(iters_left // steps_left, 24)
+        for it in range(budget):
             D = np.zeros((kin.ne, kin.ng, 4, 4))
             D[:, :, :3, :3] = (2.0 * mu[:, :, None, None] * Idev
                                + K * np.ones((3, 3)))
@@ -423,8 +426,7 @@ def solve(l_over_a=5.0, S=1.0, p=None, a=None,
                 print(f"  step {step}/{n_ramp} it {it_total:3d}  "
                       f"|du|/|u| = {resid:.2e}  |dμ|/|μ| = {resid_mu:.2e}")
             if progress is not None:
-                per_step = max(itmax // n_ramp, 1)
-                frac = ((step - 1) + (it + 1) / per_step) / n_ramp
+                frac = it_total / max(itmax, 1)
                 progress(
                     min(0.99, frac),
                     f"Load step {step}/{n_ramp}, iteration {it_total}  "
@@ -432,6 +434,7 @@ def solve(l_over_a=5.0, S=1.0, p=None, a=None,
                 )
             if resid < tol and resid_mu < tol_mu and it > 2:
                 break
+        iters_left = max(itmax - it_total, 0)
 
     converged = bool(resid < tol and resid_mu < tol_mu)
     if progress is not None:
@@ -640,7 +643,8 @@ def run_mesh_convergence(l_over_a=5.0, S=1.0, xi=0.3,
         met["ny_box"] = spec["ny_box"]
         met["tip_box"] = tip_box
         if verbose:
-            print(f"    ne={met['ne']}, h/a={met['h']:.4e}, COD/a={met['cod']:.6e}, "
+            print(f"    ne={met['ne']}, h/a={met['h']:.4e}, "
+                  f"half-COD/a={met['cod']:.6e}, "
                   f"iters={met['iters']}, resid={met['resid']:.2e}",
                   flush=True)
         rows.append(met)
@@ -697,21 +701,21 @@ def tip_profile(sol, key, tol=0.08):
 
 
 def verify_elastic(S=0.05, a=1.0):
-    """Near-tip sigma_yy vs K_I / sqrt(2 pi r) for an infinite-plate estimate.
+    """Near-tip sigma_yy vs full infinite-plate Westergaard stress S*x/sqrt(x^2-a^2).
 
-    Uses classical elasticity (l = 0, no HELP) at a small remote load. The
-    infinite-plate K_I = S sigY sqrt(pi a) is only approximate on a finite
-    plate, so the check reports the median relative error on a tip ring.
+    Uses classical elasticity (l = 0, no HELP) at a small remote load on a
+    large plate (W = H = 20a) and checks the ligament profile ahead of the tip.
     """
     p = Params(xi=0.0)
     sol = solve(l_over_a=0.0, S=S, p=p, a=a, nx_c=16, nx_l=20, ny=22,
                 W_over_a=20.0, H_over_a=20.0, itmax=8, tol=1e-8)
     r, sy = tip_profile(sol, "sig_yy_hat", tol=0.03)
-    # Infinite-plate estimate: sigma_yy/sigY ~ S sqrt(pi a) / sqrt(2 pi r).
     m = (r > 0.08) & (r < 0.40)
-    exact = S * np.sqrt(a / (2.0 * r[m]))
+    x = a + r[m] * a
+    exact = S * x / np.sqrt(x ** 2 - a ** 2)
     err = np.abs(sy[m] / exact - 1.0)
-    return dict(cod=sol["cod"], median_err=float(np.median(err)),
+    return dict(cod=sol["cod"], cod_full=sol["cod_full"],
+                median_err=float(np.median(err)),
                 max_err=float(np.max(err)), n=int(m.sum()),
                 iters=sol["iters"])
 
@@ -723,6 +727,7 @@ def verify_softening_runs():
                 verbose=False)
     soft = sol["soft"].ravel()
     return dict(iters=sol["iters"], resid=sol["resid"], cod=sol["cod"],
+                cod_full=sol["cod_full"],
                 soft_min=float(soft.min()), soft_mean=float(soft.mean()),
                 eps_e_max=float(sol["eps_e"].max()),
                 sig_e_max=float(sol["sig_e_hat"].max()))
@@ -736,13 +741,13 @@ if __name__ == "__main__":
           f"{m.coords[m.tip, 1]:.3f})")
 
     e = verify_elastic()
-    print("elastic near-tip sigma_yy vs K_I/sqrt(2 pi r):"
-          f"  median {e['median_err']:.1%}, max {e['max_err']:.1%},"
-          f" COD/a={e['cod']:.4e}, iters={e['iters']}")
+    print("elastic near-tip sigma_yy vs Westergaard:"
+          f"  median {e['median_err']:.2%}, max {e['max_err']:.2%},"
+          f" half-COD/a={e['cod']:.4e}, iters={e['iters']}")
 
     s = verify_softening_runs()
     print("HELP softening demo:"
           f"  iters={s['iters']}, resid={s['resid']:.2e},"
-          f" COD/a={s['cod']:.4e},"
+          f" half-COD/a={s['cod']:.4e},"
           f" soft in [{s['soft_min']:.3f}, 1], mean {s['soft_mean']:.3f},"
           f" max eps_e={s['eps_e_max']:.4f}, max sig_e/sigY={s['sig_e_max']:.3f}")
