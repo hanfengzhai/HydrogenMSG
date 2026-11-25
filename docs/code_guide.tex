@@ -109,7 +109,7 @@
 \renewcommand{\textfraction}{0.06}
 \renewcommand{\floatpagefraction}{0.78}
 
-\title{\textbf{HydrogenMSG: Code Architecture, Prerequisites, and Usage Guide}}
+\title{\textbf{Code Structure and Reproducibility Guide}\\[0.25em]{\large Companion software to \emph{Size-dependent hydrogen trapping in mechanism-based strain gradient plasticity: analytical and semi-analytical solutions}}}
 \author{Hanfeng Zhai}
 \date{}
 
@@ -117,21 +117,26 @@
 \maketitle
 
 \begin{abstract}
-\texttt{HydrogenMSG} provides the Python analytical library, two-dimensional finite-element solvers, and figure generation pipeline accompanying the study of size-dependent hydrogen transport and trapping in mechanism-based strain gradient (MSG) plasticity.
+\texttt{HydrogenMSG} provides the reference Python library, 2D Q9 finite-element checks, and figure scripts accompanying \emph{Size-dependent hydrogen trapping in mechanism-based strain gradient plasticity: analytical and semi-analytical solutions}.
 %
-This guide summarizes the software prerequisites, layered package architecture, command-line workflows, verified outputs, and interactive browser companion tool so every calculation and manuscript figure can be reproduced cleanly.
+The codebase implements the coupled Taylor dislocation and Oriani trapping closures for wire torsion, beam bending, spherical void growth, and HELP cavitation.
+%
+This guide summarizes the prerequisites, layered module architecture, Python analytical API, figure CLI, verified solver outputs, and companion browser GUI.
 \end{abstract}
 
-\section{Overview and Interactive Browser GUI}
+\section{Introduction}
 
-The public repository at \url{https://github.com/hanfengzhai/HydrogenMSG} organizes the codebase into three layers under \texttt{hydrogenmsg/}: closed-form MSG--Oriani solutions (\texttt{analytics}), lower-order Q9 finite-element checks (\texttt{fem}), and figure builders (\texttt{plot}).
+Every calculation and figure in the accompanying manuscript is implemented in \url{https://github.com/hanfengzhai/HydrogenMSG} under \texttt{hydrogenmsg/}.
 %
-For interactive parameter exploration without installing Python locally, a browser GUI application is hosted online at:
-\begin{quote}
-\centering
-\url{https://hanfengzhai.github.io/HydrogenMSG.html}
-\end{quote}
-Users exploring parameter sensitivities for torsion, bending, spherical void trapping, or HELP cavitation can use the browser interface directly; local installation is needed only to call the Python API, run finite-element checks, or regenerate figure files.
+The \texttt{analytics} layer evaluates the closed-form and semi-analytical MSG--Oriani solutions for torsion, bending, spherical voids, and HELP cavitation.
+%
+The \texttt{fem} package performs 9-node quadrilateral (Q9) canonical checks alongside 2D axisymmetric void and mode-I slit boundary-value solves.
+%
+The \texttt{plot} module exports all $27$ manuscript panels and $20$ companion panels as vector PDFs and $200$\,DPI PNGs.
+%
+Readers can explore parameter sensitivities online at \url{https://hanfengzhai.github.io/HydrogenMSG.html}.
+%
+The sections below cover local prerequisites, codebase layout, API calls, figure generation, and finite-element verification for the paper.
 
 \section{Prerequisites and Installation}
 
