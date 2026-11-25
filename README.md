@@ -1,5 +1,7 @@
 # Size-dependent hydrogen trapping in MSG plasticity
 
+> **Interactive GUI App:** Explore and play with the solutions directly in your browser at **[https://hanfengzhai.github.io/HydrogenMSG.html](https://hanfengzhai.github.io/HydrogenMSG.html)**.
+
 Companion code for the paper on **hydrogen transport and trapping** in
 mechanism-based strain gradient (MSG) plasticity.
 
