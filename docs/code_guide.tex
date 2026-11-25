@@ -1,7 +1,7 @@
 % Companion code structure and usage guide for HydrogenMSG.
 % Code: https://github.com/hanfengzhai/HydrogenMSG
 \documentclass[11pt]{article}
-\usepackage[margin=0.78in]{geometry}
+\usepackage[margin=0.75in]{geometry}
 \usepackage{iftex}
 \ifPDFTeX
   \usepackage[T1]{fontenc}
@@ -15,23 +15,91 @@
 \usepackage{listings}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,positioning,shapes.multipart,fit}
-\lstdefinestyle{graycode}{
-  basicstyle=\ttfamily\fontsize{7.2}{9.1}\selectfont,
-  backgroundcolor=\color{black!5},
+
+\definecolor{RunShellBg}{RGB}{243,247,253}
+\definecolor{RunShellFrame}{RGB}{58,112,168}
+\definecolor{RunPyBg}{RGB}{243,250,248}
+\definecolor{RunPyFrame}{RGB}{36,126,115}
+\definecolor{TermBg}{RGB}{248,248,246}
+\definecolor{TermFrame}{RGB}{125,135,148}
+\definecolor{CodeKw}{RGB}{0,84,179}
+\definecolor{CodeStr}{RGB}{163,21,21}
+\definecolor{CodeCom}{RGB}{34,126,58}
+\definecolor{CodeEmph}{RGB}{118,52,168}
+
+\lstdefinestyle{runshell}{
+  language=bash,
+  alsoletter={-},
+  basicstyle=\ttfamily\fontsize{8.5}{10.8}\selectfont\color{black!92},
+  backgroundcolor=\color{RunShellBg},
   frame=single,
-  rulecolor=\color{black!20},
-  framerule=0.5pt,
-  xleftmargin=3pt,
-  xrightmargin=3pt,
-  framesep=4.5pt,
+  rulecolor=\color{RunShellFrame},
+  framerule=0.8pt,
+  xleftmargin=2pt,
+  xrightmargin=2pt,
+  framesep=6pt,
   breaklines=true,
   breakatwhitespace=false,
   columns=fixed,
-  basewidth=0.48em,
+  basewidth=0.50em,
   keepspaces=true,
-  aboveskip=4pt,
-  belowskip=6pt,
-  showstringspaces=false
+  aboveskip=6pt,
+  belowskip=8pt,
+  showstringspaces=false,
+  keywordstyle=\color{CodeKw}\bfseries,
+  commentstyle=\color{CodeCom}\itshape,
+  stringstyle=\color{CodeStr},
+  emphstyle=\color{CodeEmph}\bfseries,
+  morekeywords={git,clone,cd,python3,pip,install,hydrogenmsg-figures},
+  emph={--list,--manuscript,-m,-e,-r,-c}
+}
+
+\lstdefinestyle{runpython}{
+  language=Python,
+  basicstyle=\ttfamily\fontsize{8.5}{10.8}\selectfont\color{black!92},
+  backgroundcolor=\color{RunPyBg},
+  frame=single,
+  rulecolor=\color{RunPyFrame},
+  framerule=0.8pt,
+  xleftmargin=2pt,
+  xrightmargin=2pt,
+  framesep=6pt,
+  breaklines=true,
+  breakatwhitespace=false,
+  columns=fixed,
+  basewidth=0.50em,
+  keepspaces=true,
+  aboveskip=6pt,
+  belowskip=8pt,
+  showstringspaces=false,
+  keywordstyle=\color{CodeKw}\bfseries,
+  commentstyle=\color{CodeCom}\itshape,
+  stringstyle=\color{CodeStr},
+  emphstyle=\color{CodeEmph}\bfseries,
+  emph={Params,torsion_Q,bending_average_uptake,void_fields,cavitation_stress}
+}
+
+\lstdefinestyle{termout}{
+  basicstyle=\ttfamily\fontsize{7.9}{9.9}\selectfont\color{black!90},
+  backgroundcolor=\color{TermBg},
+  frame=single,
+  rulecolor=\color{TermFrame},
+  framerule=0.7pt,
+  xleftmargin=2pt,
+  xrightmargin=2pt,
+  framesep=5.5pt,
+  breaklines=true,
+  breakatwhitespace=false,
+  columns=fixed,
+  basewidth=0.44em,
+  keepspaces=true,
+  aboveskip=5pt,
+  belowskip=7pt,
+  showstringspaces=false,
+  comment=[l]{\#},
+  commentstyle=\color{CodeCom}\bfseries,
+  emphstyle=\color{CodeKw}\bfseries,
+  emph={torsion,bending,HELP}
 }
 \usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
 \usepackage{setspace}
@@ -89,7 +157,7 @@ Build backend & \texttt{setuptools} $\ge 61$ & Editable install and \texttt{hydr
 \end{table}
 
 \noindent\begin{minipage}{\textwidth}
-\begin{lstlisting}[style=graycode]
+\begin{lstlisting}[style=runshell]
 # 1. Clone the public repository
 git clone https://github.com/hanfengzhai/HydrogenMSG.git && cd HydrogenMSG
 
@@ -249,7 +317,7 @@ Path & Layer & Responsibility \\
 All analytical models operate on the \texttt{Params} dataclass, whose defaults follow bcc iron hydrogen parameters and Huang-style MSG constants ($\sigma_{\mathrm{Y}}=400\,\mathrm{MPa}$, $\mu/\sigma_{\mathrm{Y}}=200$, $E/\sigma_{\mathrm{Y}}=500$, $l=4.80\,\mu\mathrm{m}$, $W_{\mathrm{B}}=30\,\mathrm{kJ/mol}$).
 
 \noindent\begin{minipage}{\textwidth}
-\begin{lstlisting}[style=graycode]
+\begin{lstlisting}[style=runpython]
 from hydrogenmsg import Params
 from hydrogenmsg.analytics import (
     torsion_Q, bending_average_uptake, void_fields, cavitation_stress
@@ -272,7 +340,7 @@ Every figure is registered under \texttt{hydrogenmsg.plot.panels.PANELS} and wri
 Schematics and analytical curves run in a few seconds; the mode-I slit panels (\texttt{fig12*}) solve fine $80\times 40$ tip-window nonlinear problems and take longer on a single CPU core.
 
 \noindent\begin{minipage}{\textwidth}
-\begin{lstlisting}[style=graycode]
+\begin{lstlisting}[style=runshell]
 # List all 27 manuscript panels and 20 companion panels
 python3 -m hydrogenmsg.plot --list
 
@@ -292,7 +360,7 @@ python3 -m hydrogenmsg.plot                      # full suite (including SI + fi
 Each module in \texttt{hydrogenmsg.fem} provides an executable \texttt{\_\_main\_\_} verification suite checking discretization and boundary-value accuracy against the analytical solutions.
 
 \noindent\begin{minipage}{\textwidth}
-\begin{lstlisting}[style=graycode]
+\begin{lstlisting}[style=runshell]
 # 1. Canonical torsion & bending Q9 evaluations against closed forms
 python3 -m hydrogenmsg.fem.canonical
 
@@ -309,7 +377,7 @@ python3 -m hydrogenmsg.fem.slit
 Running the three commands above produces the terminal output below:
 
 \noindent\begin{minipage}{\textwidth}
-\begin{lstlisting}[style=graycode]
+\begin{lstlisting}[style=termout]
 # python3 -m hydrogenmsg.fem.canonical
 torsion: {'cT_err': 4.714071409068731e-16, 'T_fem': 1.9247552442625562, 'T_an': 1.9713459654999823, 'T_rel': 0.023633964840671484}
 bending: {'sig_m_err': 2.220446049250313e-16, 'cT_err': 5.254566250143749e-16}
