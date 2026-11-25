@@ -2,7 +2,7 @@
 
 > **Interactive GUI App:** Explore and play with the solutions directly in your browser at **[https://hanfengzhai.github.io/HydrogenMSG.html](https://hanfengzhai.github.io/HydrogenMSG.html)**.
 >
-> **Code Structure & Usage Guide (PDF):** [`docs/code_guide.pdf`](docs/code_guide.pdf) (source: [`docs/code_guide.tex`](docs/code_guide.tex)).
+> **Code Structure & Usage Guide (PDF):** [`docs/code_guide.pdf`](docs/code_guide.pdf).
 
 Companion code for the paper on **hydrogen transport and trapping** in
 mechanism-based strain gradient (MSG) plasticity.

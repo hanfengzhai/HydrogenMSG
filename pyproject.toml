@@ -19,6 +19,3 @@ hydrogenmsg-figures = "hydrogenmsg.plot.__main__:main"
 
 [tool.setuptools.packages.find]
 include = ["hydrogenmsg*"]
-
-[tool.setuptools.package-data]
-hydrogenmsg = ["plot/assets/*"]
